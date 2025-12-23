@@ -16,6 +16,7 @@ import {
   ModalBody,
   ModalFooter,
   useDisclosure,
+  Pagination,
 } from "@heroui/react";
 import { FaTrash } from "react-icons/fa";
 import { useEffect, useState } from "react";
@@ -38,6 +39,12 @@ const AdminManageAdmin = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
+  // --- PAGINATION STATES ---
+  const [page, setPage] = useState(1);
+  const rowsPerPage = 13;
+
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
   const getToken = () => {
     return document.cookie
       .split("; ")
@@ -51,14 +58,14 @@ const AdminManageAdmin = () => {
     const d = new Date(dateString);
     const day = String(d.getDate()).padStart(2, "0");
     const month = String(d.getMonth() + 1).padStart(2, "0");
-    const year = String(d.getFullYear()).slice(-2);
+    const year = String(d.getFullYear());
     return `${day}/${month}/${year}`;
   };
 
   const fetchAdmins = async () => {
     setLoadingTable(true);
     try {
-      const res = await fetch("http://localhost:5500/v1/admins/", {
+      const res = await fetch(`${API_BASE_URL}/v1/admins/`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${getToken()}`,
@@ -76,6 +83,9 @@ const AdminManageAdmin = () => {
     fetchAdmins();
   }, []);
 
+  // --- PAGINATION LOGIC ---
+  const pages = Math.ceil(dataadmin.length / rowsPerPage);
+
   // ADD Admin dengan Toast
   const handleAddAdmin = async () => {
     if (!nama || !username || !password) {
@@ -89,7 +99,7 @@ const AdminManageAdmin = () => {
     }
 
     try {
-      const res = await fetch("http://localhost:5500/v1/admins/", {
+      const res = await fetch(`${API_BASE_URL}/v1/admins/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -137,7 +147,7 @@ const AdminManageAdmin = () => {
     if (!confirm("Yakin ingin menghapus admin ini?")) return;
 
     try {
-      const res = await fetch(`http://localhost:5500/v1/admins/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/v1/admins/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${getToken()}`,
@@ -247,6 +257,20 @@ const AdminManageAdmin = () => {
               shadow="none"
               isStriped
               className="rounded-xl border border-gray-200"
+              bottomContent={
+                pages > 0 ? (
+                  <div className="flex w-full justify-center">
+                    <Pagination
+                      showControls
+                      showShadow
+                      color="primary"
+                      page={page}
+                      total={pages}
+                      onChange={(page) => setPage(page)}
+                    />
+                  </div>
+                ) : null
+              }
             >
               <TableHeader>
                 <TableColumn>No</TableColumn>

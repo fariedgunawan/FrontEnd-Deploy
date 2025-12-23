@@ -54,7 +54,7 @@ interface Laporan {
 }
 
 const AdminDownloadRekap = () => {
-  const baseUrl = "http://localhost:5500";
+  const baseUrl = import.meta.env.VITE_API_BASE_URL;
   const getToken = (): string | undefined => {
     const token = document.cookie
       .split("; ")
@@ -244,7 +244,7 @@ const AdminDownloadRekap = () => {
       const response = await fetch(`${baseUrl}${endpoint}`, {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${token}`, // Token dikirim di sini
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -252,16 +252,13 @@ const AdminDownloadRekap = () => {
         throw new Error("Gagal mengunduh file");
       }
 
-      // 1. Ubah response menjadi Blob (Binary Large Object)
       const blob = await response.blob();
 
-      // 2. Buat URL objek sementara dari blob tersebut
       const url = window.URL.createObjectURL(blob);
 
-      // 3. Buat elemen <a> fiktif untuk men-trigger download
       const a = document.createElement("a");
       a.href = url;
-      a.download = filename; // Nama file saat disimpan
+      a.download = filename;
       document.body.appendChild(a);
       a.click();
 
@@ -441,8 +438,8 @@ const AdminDownloadRekap = () => {
                     variant="underlined"
                     labelPlacement="outside"
                     placeholder="Pilih Satpam"
+                    className="hidden"
                     items={listSatpam}
-                    // Properti selectedKeys harus berupa Set atau Array
                     selectedKeys={
                       formAbsen.satpam_id ? [formAbsen.satpam_id] : []
                     }
@@ -513,18 +510,26 @@ const AdminDownloadRekap = () => {
               </ModalHeader>
               <ModalBody>
                 <div className="flex flex-col gap-6 p-2">
-                  <Input
+                  <Select
                     label="Status Lokasi"
                     variant="underlined"
                     labelPlacement="outside"
-                    value={formPatroli.status_lokasi}
+                    placeholder="Pilih Status"
+                    selectedKeys={
+                      formPatroli.status_lokasi
+                        ? [formPatroli.status_lokasi]
+                        : []
+                    }
                     onChange={(e) =>
                       setFormPatroli({
                         ...formPatroli,
                         status_lokasi: e.target.value,
                       })
                     }
-                  />
+                  >
+                    <SelectItem key="Aman">Aman</SelectItem>
+                    <SelectItem key="Tidak Aman">Tidak Aman</SelectItem>
+                  </Select>
                   <Input
                     label="Keterangan"
                     variant="underlined"

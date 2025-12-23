@@ -17,6 +17,7 @@ import {
   SelectItem,
   Spinner,
   addToast,
+  Pagination,
 } from "@heroui/react";
 import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 
@@ -43,6 +44,7 @@ interface FormData {
 }
 
 const AdminManagePlotting = () => {
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const getToken = (): string | undefined => {
     const token = document.cookie
       .split("; ")
@@ -66,6 +68,8 @@ const AdminManagePlotting = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [loadingDeleteId, setLoadingDeleteId] = useState<number | null>(null);
   const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [page, setPage] = useState(1);
+  const rowsPerPage = 13;
 
   // Form states
   const [formData, setFormData] = useState<FormData>({
@@ -77,7 +81,7 @@ const AdminManagePlotting = () => {
   const fetchPlotting = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await fetch("http://localhost:5500/v1/plotting/", {
+      const response = await fetch(`${API_BASE_URL}/v1/plotting/`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const result = await response.json();
@@ -89,14 +93,16 @@ const AdminManagePlotting = () => {
     }
   }, [token]);
 
+  const pages = Math.ceil(dataPlotting.length / rowsPerPage);
+
   // --- FETCH DROPDOWNS ---
   useEffect(() => {
     const fetchDropdowns = async () => {
       try {
         const headers = { Authorization: `Bearer ${token}` };
         const [resSatpam, resPos] = await Promise.all([
-          fetch("http://localhost:5500/v1/satpams/?mode=dropdown", { headers }),
-          fetch("http://localhost:5500/v1/poss/?tipe=jaga", { headers }),
+          fetch(`${API_BASE_URL}/v1/satpams/?mode=dropdown`, { headers }),
+          fetch(`${API_BASE_URL}/v1/poss/?tipe=jaga`, { headers }),
         ]);
         const ds = await resSatpam.json();
         const dp = await resPos.json();
@@ -119,7 +125,7 @@ const AdminManagePlotting = () => {
   const handleOpenEdit = async (id: number) => {
     setSelectedId(id);
     try {
-      const res = await fetch(`http://localhost:5500/v1/plotting/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/v1/plotting/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const result = await res.json();
@@ -143,8 +149,8 @@ const AdminManagePlotting = () => {
     };
 
     const url = selectedId
-      ? `http://localhost:5500/v1/plotting/${selectedId}`
-      : "http://localhost:5500/v1/plotting/";
+      ? `${API_BASE_URL}/v1/plotting/${selectedId}`
+      : `${API_BASE_URL}/v1/plotting/`;
     const method = selectedId ? "PUT" : "POST";
 
     try {
@@ -177,7 +183,7 @@ const AdminManagePlotting = () => {
     if (!window.confirm("Hapus data ini?")) return;
     setLoadingDeleteId(id);
     try {
-      const res = await fetch(`http://localhost:5500/v1/plotting/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/v1/plotting/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -310,6 +316,20 @@ const AdminManagePlotting = () => {
             shadow="none"
             isStriped
             className="rounded-xl border border-gray-200"
+            bottomContent={
+              pages > 0 ? (
+                <div className="flex w-full justify-center">
+                  <Pagination
+                    showControls
+                    showShadow
+                    color="primary"
+                    page={page}
+                    total={pages}
+                    onChange={(page) => setPage(page)}
+                  />
+                </div>
+              ) : null
+            }
           >
             <TableHeader>
               <TableColumn>No</TableColumn>

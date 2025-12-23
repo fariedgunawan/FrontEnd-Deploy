@@ -10,12 +10,14 @@ const Login = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
   const handleLogin = async () => {
     setLoading(true);
     setError("");
 
     try {
-      const response = await fetch("http://localhost:5500/v1/auth/login", {
+      const response = await fetch(`${API_BASE_URL}/v1/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
@@ -101,7 +103,8 @@ const Login = () => {
         {error && <p className="text-red-500 mt-3">{error}</p>}
 
         <h2 className="text-[#122C93] text-[15px] font-light mt-5">
-          Lupa Password ?
+          Lupa Password ?{" "}
+          <span className="font-semibold">Silahkan Konfirmasi Admin</span>
         </h2>
 
         <Button

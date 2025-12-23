@@ -9,6 +9,7 @@ import {
   Input,
   Spinner,
   addToast,
+  Pagination,
 } from "@heroui/react";
 import {
   Modal,
@@ -74,7 +75,11 @@ const AdminManagePosUtama = () => {
   const [loading, setLoading] = useState(false);
   const [loadingTable, setLoadingTable] = useState(false);
 
-  const API_URL = "http://localhost:5500/v1/poss";
+  const [page, setPage] = useState(1);
+  const rowsPerPage = 13;
+
+  const BASE_API_URL = import.meta.env.VITE_API_BASE_URL;
+  const API_URL = `${BASE_API_URL}/v1/poss`;
 
   // Ambil token dari cookie
   const getToken = () => {
@@ -108,6 +113,8 @@ const AdminManagePosUtama = () => {
       setLoadingTable(false);
     }
   };
+
+  const pages = Math.ceil(dataPos.length / rowsPerPage);
 
   useEffect(() => {
     fetchData();
@@ -369,7 +376,25 @@ const AdminManagePosUtama = () => {
               <Spinner label="Memuat data..." />
             </div>
           ) : (
-            <Table aria-label="Tabel Data Pos" shadow="none" isStriped>
+            <Table
+              aria-label="Tabel Data Pos"
+              shadow="none"
+              isStriped
+              bottomContent={
+                pages > 0 ? (
+                  <div className="flex w-full justify-center">
+                    <Pagination
+                      showControls
+                      showShadow
+                      color="primary"
+                      page={page}
+                      total={pages}
+                      onChange={(page) => setPage(page)}
+                    />
+                  </div>
+                ) : null
+              }
+            >
               <TableHeader>
                 <TableColumn>No</TableColumn>
                 <TableColumn>Nama Pos</TableColumn>

@@ -60,6 +60,7 @@ interface GenerateFormData {
 }
 
 const AdminManageShift = () => {
+  const BASE_URL_API = import.meta.env.VITE_API_BASE_URL;
   const getToken = (): string | undefined => {
     const token = document.cookie
       .split("; ")
@@ -138,7 +139,7 @@ const AdminManageShift = () => {
   const fetchJadwal = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await fetch("http://localhost:5500/v1/jadwals/", {
+      const response = await fetch(`${BASE_URL_API}/v1/jadwals/`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const result = await response.json();
@@ -155,8 +156,8 @@ const AdminManageShift = () => {
       try {
         const headers = { Authorization: `Bearer ${token}` };
         const [resSatpam, resPos] = await Promise.all([
-          fetch("http://localhost:5500/v1/satpams/?mode=dropdown", { headers }),
-          fetch("http://localhost:5500/v1/poss/?tipe=utama", { headers }),
+          fetch(`${BASE_URL_API}/v1/satpams/?mode=dropdown`, { headers }),
+          fetch(`${BASE_URL_API}/v1/poss/?tipe=utama`, { headers }),
         ]);
         const ds = await resSatpam.json();
         const dp = await resPos.json();
@@ -186,7 +187,7 @@ const AdminManageShift = () => {
   const handleOpenEdit = async (id: number) => {
     setSelectedId(id);
     try {
-      const res = await fetch(`http://localhost:5500/v1/jadwals/${id}`, {
+      const res = await fetch(`${BASE_URL_API}/v1/jadwals/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const result = await res.json();
@@ -230,8 +231,8 @@ const AdminManageShift = () => {
           : formData.jam_selesai_shift,
     };
     const url = selectedId
-      ? `http://localhost:5500/v1/jadwals/${selectedId}`
-      : "http://localhost:5500/v1/jadwals/";
+      ? `${BASE_URL_API}/v1/jadwals/${selectedId}`
+      : `${BASE_URL_API}/v1/jadwals/`;
     const res = await fetch(url, {
       method: selectedId ? "PUT" : "POST",
       headers: {
@@ -268,7 +269,7 @@ const AdminManageShift = () => {
           ? `${generateData.jam_selesai_shift}:00`
           : generateData.jam_selesai_shift,
     };
-    const res = await fetch("http://localhost:5500/v1/jadwals/recurring", {
+    const res = await fetch(`${BASE_URL_API}/v1/jadwals/recurring`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -290,7 +291,7 @@ const AdminManageShift = () => {
   const handleDelete = async (id: number) => {
     if (!window.confirm("Hapus data ini?")) return;
     setLoadingDeleteId(id);
-    const res = await fetch(`http://localhost:5500/v1/jadwals/${id}`, {
+    const res = await fetch(`${BASE_URL_API}/v1/jadwals/${id}`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -315,13 +316,13 @@ const AdminManageShift = () => {
           <div className="container-generate flex flex-row gap-5">
             <Button
               onPress={onOpenGenerate}
-              className="bg-[#122C93] text-white h-12"
+              className="bg-[#122C93] text-white font-semibold h-12"
             >
               Generate Jadwal +
             </Button>
             <Button
               onPress={handleOpenAdd}
-              className="bg-[#122C93] text-white h-12"
+              className="bg-[#122C93] text-white font-semibold h-12"
             >
               Tambah +
             </Button>

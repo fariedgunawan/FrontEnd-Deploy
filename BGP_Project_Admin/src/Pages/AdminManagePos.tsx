@@ -9,6 +9,7 @@ import {
   Input,
   Spinner,
   addToast,
+  Pagination,
 } from "@heroui/react";
 import {
   Modal,
@@ -74,7 +75,11 @@ const AdminManagePos = () => {
   const [loading, setLoading] = useState(false);
   const [loadingTable, setLoadingTable] = useState(false);
 
-  const API_URL = "http://localhost:5500/v1/poss";
+  const [page, setPage] = useState(1);
+  const rowsPerPage = 13;
+
+  const BASE_API_URL = import.meta.env.VITE_API_BASE_URL;
+  const API_URL = `${BASE_API_URL}/v1/poss`;
 
   // Ambil token dari cookie
   const getToken = () => {
@@ -109,6 +114,8 @@ const AdminManagePos = () => {
     }
   };
 
+  const pages = Math.ceil(dataPos.length / rowsPerPage);
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -127,7 +134,6 @@ const AdminManagePos = () => {
     onOpen();
   };
 
-  // Buka modal edit (GET by ID)
   const handleEdit = async (id: number) => {
     try {
       const res = await fetch(`${API_URL}/${id}`, {
@@ -135,7 +141,6 @@ const AdminManagePos = () => {
       });
       const data = await res.json();
 
-      // Sesuai respons baru Anda: data.pos
       const item = data.pos;
 
       if (item) {
@@ -148,12 +153,10 @@ const AdminManagePos = () => {
           created_at: item.created_at || "",
         });
 
-        // Konversi string koordinat dari database ke float untuk Leaflet
         const lat = parseFloat(item.latitude);
         const lng = parseFloat(item.longitude);
 
         if (!isNaN(lat) && !isNaN(lng)) {
-          // Mengatur posisi marker di peta
           setSelectedPosition(new LatLng(lat, lng));
         } else {
           setSelectedPosition(null);
@@ -176,14 +179,13 @@ const AdminManagePos = () => {
     }
   };
 
-  // Simpan (add atau edit)
   const handleSave = async () => {
     if (!formData.kode_pos || !formData.nama_pos || !selectedPosition) return;
 
     const payload = {
       kode_pos: formData.kode_pos,
       nama_pos: formData.nama_pos,
-      tipe_pos: "jaga", // Tembak langsung sesuai instruksi
+      tipe_pos: "jaga",
       latitude: selectedPosition.lat,
       longitude: selectedPosition.lng,
     };
@@ -369,7 +371,25 @@ const AdminManagePos = () => {
               <Spinner label="Memuat data..." />
             </div>
           ) : (
-            <Table aria-label="Tabel Data Pos" shadow="none" isStriped>
+            <Table
+              aria-label="Tabel Data Pos"
+              shadow="none"
+              isStriped
+              bottomContent={
+                pages > 0 ? (
+                  <div className="flex w-full justify-center">
+                    <Pagination
+                      showControls
+                      showShadow
+                      color="primary"
+                      page={page}
+                      total={pages}
+                      onChange={(page) => setPage(page)}
+                    />
+                  </div>
+                ) : null
+              }
+            >
               <TableHeader>
                 <TableColumn>No</TableColumn>
                 <TableColumn>Nama Pos</TableColumn>
