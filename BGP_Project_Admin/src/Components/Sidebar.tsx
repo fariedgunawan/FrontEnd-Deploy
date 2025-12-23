@@ -27,10 +27,10 @@ const Sidebar = () => {
     {
       name: "Manage Admin",
       icon: <IoMdSettings />,
-      path: role === "SuperAdmin" ? "/AdminManageAdmin" : "#", // nonaktifkan link jika bukan superadmin
+      path: role === "SuperAdmin" ? "/AdminManageAdmin" : "#",
       disabled: role !== "SuperAdmin",
     },
-    { name: "Manage Pos", icon: <AiFillHome />, path: "/AdminManagePos" },
+    { name: "Manage Pos Patroli", icon: <AiFillHome />, path: "/AdminManagePos" },
     {
       name: "Manage Pos Utama",
       icon: <MdCoPresent />,

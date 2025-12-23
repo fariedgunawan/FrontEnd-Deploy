@@ -65,7 +65,7 @@ const Verification = () => {
 
       if (response.ok) {
         setResultData(result);
-        onOpen(); 
+        onOpen();
       } else {
         alert(result.message || "Gagal melakukan presensi.");
       }
@@ -115,13 +115,13 @@ const Verification = () => {
           <div className="flex flex-col items-center mt-3">
             {/* Nama dan NIP di bawah ini tetap Yohanes sebagai Placeholder 
                 sebelum divalidasi oleh sistem/API */}
-            <p className="text-[20px] font-semibold text-gray-400 italic">
-              Menunggu Konfirmasi...
+            <p className="text-[20px] font-semibold text-[#122C93]">
+              Menunggu Konfirmasi Anda
             </p>
           </div>
         </div>
 
-        <div className="flex justify-center gap-6 mt-6 w-[450px]">
+        <div className="flex justify-center gap-6 mt-6 w-full">
           <Button
             className="bg-[#A80808] text-white w-1/2 h-11 font-semibold rounded-xl"
             onPress={handleCancel}

@@ -166,7 +166,7 @@ const ReportPatroli = () => {
   };
 
   return (
-    <div className="flex flex-col items-center min-h-screen bg-[#F5F7FF] px-6 py-10 text-[#122C93]">
+    <div className="flex flex-col items-center justify-between min-h-screen bg-[#F5F7FF] px-6 py-10 text-[#122C93]">
       <div className="text-center mb-6">
         <h2 className="text-[20px] font-bold">Data Hasil Patroli</h2>
         <p className="text-[14px] opacity-80">
@@ -193,6 +193,7 @@ const ReportPatroli = () => {
           </div>
         ))}
       </div>
+      <h2>Tekan kembali jika ingin melakukan foto ulang</h2>
 
       <div className="w-full flex flex-col gap-4">
         {/* Select Petugas */}
