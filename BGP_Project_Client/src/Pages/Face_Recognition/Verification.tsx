@@ -77,19 +77,26 @@ const Verification = () => {
         setResultData(result);
         onOpen();
       }
-      // 3. Cek Error Jadwal
+      // 3. Cek Error Jadwal Tidak Ditemukan
       else if (result.message === "No schedule found for this Satpam today.") {
         setResultData(result);
         onOpen();
       }
-      // 4. Sukses
+      // 4. Cek Shift Sudah Selesai (BARU)
+      else if (
+        result.message ===
+        "You have already completed your shift (In and Out) for today."
+      ) {
+        setResultData(result);
+        onOpen();
+      }
+      // 5. Sukses Normal
       else if (response.ok) {
         setResultData(result);
         onOpen();
       }
-      // 5. Error Lainnya dari Server (selain 3 di atas)
+      // 6. Error Lainnya dari Server
       else {
-        // Kita anggap ini error server umum, tampilkan pesan dari API atau default
         setResultData({
           message: result.message || "SERVER_ERROR_DEFAULT",
         });
@@ -97,7 +104,7 @@ const Verification = () => {
       }
     } catch (error) {
       console.error("Error submitting attendance:", error);
-      // 6. Error Jaringan / Catch (Fetch gagal total)
+      // 7. Error Jaringan
       setResultData({ message: "NETWORK_ERROR" });
       onOpen();
     } finally {
@@ -115,6 +122,11 @@ const Verification = () => {
   const isNoSchedule =
     resultData?.message === "No schedule found for this Satpam today.";
 
+  // Helper baru untuk Shift Selesai
+  const isShiftCompleted =
+    resultData?.message ===
+    "You have already completed your shift (In and Out) for today.";
+
   // Cek apakah error Jaringan atau Server Error umum
   const isServerError =
     resultData?.message === "NETWORK_ERROR" ||
@@ -122,6 +134,7 @@ const Verification = () => {
     (!isLocationInvalid &&
       !isFaceMismatch &&
       !isNoSchedule &&
+      !isShiftCompleted &&
       !resultData?.time);
 
   return (
@@ -381,11 +394,64 @@ const Verification = () => {
                     </Button>
                   </ModalFooter>
                 </>
+              ) : isShiftCompleted ? (
+                /* === KONDISI 4: SHIFT SUDAH SELESAI (BARU) === */
+                <>
+                  <ModalHeader className="flex flex-col items-center text-[#15803d] pt-8">
+                    {/* Icon Success/Completed Double Check */}
+                    <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-2">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-8 w-8 text-[#15803d]"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                    </div>
+                    <h2 className="text-[22px] font-bold text-center">
+                      Absensi Tuntas
+                    </h2>
+                  </ModalHeader>
+
+                  <ModalBody className="flex flex-col items-center gap-4 py-4 text-center">
+                    <p className="text-[16px] text-gray-600 px-2">
+                      Anda sudah menyelesaikan shift hari ini.
+                    </p>
+
+                    <div className="bg-green-50 p-4 rounded-xl w-full border border-green-100">
+                      <p className="text-[14px] font-medium text-[#15803d] leading-relaxed">
+                        Data absen Masuk dan Pulang Anda sudah tercatat lengkap
+                        di sistem.
+                      </p>
+                    </div>
+                    <p className="text-[13px] text-gray-400 italic">
+                      Sampai jumpa di jadwal kerja berikutnya.
+                    </p>
+                  </ModalBody>
+
+                  <ModalFooter className="flex justify-center pb-8 gap-3">
+                    <Button
+                      className="bg-[#122C93] text-white w-full h-12 font-semibold"
+                      onPress={() => {
+                        onClose();
+                        navigate("/");
+                      }}
+                    >
+                      Selesai
+                    </Button>
+                  </ModalFooter>
+                </>
               ) : isServerError ? (
-                /* === KONDISI 4: ERROR JARINGAN / SERVER (BARU) === */
+                /* === KONDISI 5: ERROR JARINGAN / SERVER === */
                 <>
                   <ModalHeader className="flex flex-col items-center text-[#A80808] pt-8">
-                    {/* Icon Cloud Off / Server Error */}
                     <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-2">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -440,7 +506,7 @@ const Verification = () => {
                       className="bg-[#122C93] text-white w-full h-12 font-semibold"
                       onPress={() => {
                         onClose();
-                        handleConfirm(); // Coba kirim ulang
+                        handleConfirm();
                       }}
                     >
                       Coba Lagi
@@ -448,7 +514,7 @@ const Verification = () => {
                   </ModalFooter>
                 </>
               ) : (
-                /* === KONDISI 5: SUKSES (DEFAULT) === */
+                /* === KONDISI 6: SUKSES (DEFAULT) === */
                 <>
                   <ModalHeader className="flex flex-col items-center text-[#122C93] pt-8">
                     <h2 className="text-[22px] font-bold">
