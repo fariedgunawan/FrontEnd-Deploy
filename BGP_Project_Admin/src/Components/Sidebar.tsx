@@ -3,6 +3,7 @@ import { IoPersonAdd } from "react-icons/io5";
 import { IoMdSettings } from "react-icons/io";
 import { AiFillHome } from "react-icons/ai";
 import { GoClockFill } from "react-icons/go";
+import { LuRadius } from "react-icons/lu";
 import {
   MdFileDownload,
   MdCoPresent,
@@ -30,7 +31,11 @@ const Sidebar = () => {
       path: role === "SuperAdmin" ? "/AdminManageAdmin" : "#",
       disabled: role !== "SuperAdmin",
     },
-    { name: "Manage Pos Patroli", icon: <AiFillHome />, path: "/AdminManagePos" },
+    {
+      name: "Manage Pos Patroli",
+      icon: <AiFillHome />,
+      path: "/AdminManagePos",
+    },
     {
       name: "Manage Pos Utama",
       icon: <MdCoPresent />,
@@ -41,6 +46,11 @@ const Sidebar = () => {
       name: "Manage Patroli",
       icon: <MdOutlineManageHistory />,
       path: "/AdminManagePosPatroli",
+    },
+    {
+      name: "Manage Radius",
+      icon: <LuRadius />,
+      path: "/AdminManageRadius",
     },
     {
       name: "Download Rekap",

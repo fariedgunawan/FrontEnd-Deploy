@@ -10,6 +10,7 @@ import PrivateRoute from "./Pages/Utils/PrivateRoute";
 import AdminDownloadRekap from "./Pages/AdminDownloadRekap";
 import AdminManagePosUtama from "./Pages/AdminManagePosUtama";
 import AdminManagePatroli from "./Pages/AdminManagePatroli";
+import AdminManageRadius from "./Pages/AdminManageRadius";
 function App() {
   return (
     <Router>
@@ -36,6 +37,7 @@ function App() {
               path="/AdminDownloadRekap"
               element={<AdminDownloadRekap />}
             />
+            <Route path="/AdminManageRadius" element={<AdminManageRadius />} />
             {/* Buat selanjutnya ya */}
           </Route>
           {/* ada side bar sama navbarnya */}
