@@ -10,16 +10,16 @@ import {
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
+interface AttendanceData {
+  status: string;
+  kategori: string;
+  distance: number;
+  time: string;
+}
+
 interface AttendanceResponse {
-  action?: string;
   message: string;
-  status?: string;
-  nama?: string;
-  nip?: string;
-  time?: string;
-  similarity?: number;
-  distance?: string;
-  allowed?: string;
+  data?: AttendanceData;
 }
 
 const Verification = () => {
@@ -54,57 +54,19 @@ const Verification = () => {
       const formData = new FormData();
       const imageBlob = dataURLtoBlob(photoFromState);
 
-      formData.append("foto_presensi", imageBlob, "attendance.png");
-      formData.append("latitude", latitude || "0");
-      formData.append("longitude", longitude || "0");
+      formData.append("image", imageBlob, "attendance.png");
+      formData.append("lat", latitude || "0");
+      formData.append("lng", longitude || "0");
 
-      const response = await fetch(`${BASE_API_URL}/v1/presensi/`, {
+      const response = await fetch(`${BASE_API_URL}/v1/absensi/record`, {
         method: "POST",
         body: formData,
       });
 
-      const result = await response.json();
-
-      // --- LOGIKA PENANGANAN RESPONSE ---
-
-      // 1. Cek Error Lokasi
-      if (result.message && result.message.includes("Location invalid")) {
-        setResultData(result);
-        onOpen();
-      }
-      // 2. Cek Error Wajah
-      else if (result.message === "Face not recognized") {
-        setResultData(result);
-        onOpen();
-      }
-      // 3. Cek Error Jadwal Tidak Ditemukan
-      else if (result.message === "No schedule found for this Satpam today.") {
-        setResultData(result);
-        onOpen();
-      }
-      // 4. Cek Shift Sudah Selesai (BARU)
-      else if (
-        result.message ===
-        "You have already completed your shift (In and Out) for today."
-      ) {
-        setResultData(result);
-        onOpen();
-      }
-      // 5. Sukses Normal
-      else if (response.ok) {
-        setResultData(result);
-        onOpen();
-      }
-      // 6. Error Lainnya dari Server
-      else {
-        setResultData({
-          message: result.message || "SERVER_ERROR_DEFAULT",
-        });
-        onOpen();
-      }
+      const result: AttendanceResponse = await response.json();
+      setResultData(result);
+      onOpen();
     } catch (error) {
-      console.error("Error submitting attendance:", error);
-      // 7. Error Jaringan
       setResultData({ message: "NETWORK_ERROR" });
       onOpen();
     } finally {
@@ -116,26 +78,34 @@ const Verification = () => {
     navigate("/TakePhoto");
   };
 
-  // --- HELPER VARIABLES ---
-  const isLocationInvalid = resultData?.message?.includes("Location invalid");
-  const isFaceMismatch = resultData?.message === "Face not recognized";
+  const formatTime = (isoString?: string) => {
+    if (!isoString) return "-";
+    return new Date(isoString).toLocaleTimeString("id-ID", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
+  // Logic Variables
+  const isSuccess = !!resultData?.data;
+
+  const isLocationInvalid = resultData?.message
+    ?.toLowerCase()
+    .includes("location");
+
+  const isFaceMismatch =
+    resultData?.message?.toLowerCase().includes("face") ||
+    resultData?.message?.toLowerCase().includes("wajah");
+
   const isNoSchedule =
-    resultData?.message === "No schedule found for this Satpam today.";
+    resultData?.message?.toLowerCase().includes("schedule") ||
+    resultData?.message?.toLowerCase().includes("jadwal");
 
-  // Helper baru untuk Shift Selesai
   const isShiftCompleted =
-    resultData?.message ===
-    "You have already completed your shift (In and Out) for today.";
+    resultData?.message?.toLowerCase().includes("completed") ||
+    resultData?.message?.toLowerCase().includes("selesai");
 
-  // Cek apakah error Jaringan atau Server Error umum
-  const isServerError =
-    resultData?.message === "NETWORK_ERROR" ||
-    resultData?.message === "SERVER_ERROR_DEFAULT" ||
-    (!isLocationInvalid &&
-      !isFaceMismatch &&
-      !isNoSchedule &&
-      !isShiftCompleted &&
-      !resultData?.time);
+  // NOTE: isServerError dihapus karena logika fallback di JSX sudah menanganinya.
 
   return (
     <>
@@ -174,25 +144,24 @@ const Verification = () => {
           </div>
         </div>
 
-        <div className="flex justify-center gap-6 mt-6 w-full">
+        <div className="flex flex-col gap-4 mt-6 ">
           <Button
-            className="bg-[#A80808] text-white w-1/2 h-11 font-semibold rounded-xl"
-            onPress={handleCancel}
-            disabled={isSubmitting}
-          >
-            Batal
-          </Button>
-          <Button
-            className="bg-[#122C93] text-white w-1/2 h-11 font-semibold rounded-xl"
+            className="bg-[#122C93] text-white w-[350px] font-semibold rounded-xl"
             onPress={handleConfirm}
             isLoading={isSubmitting}
           >
             Konfirmasi
           </Button>
+          <Button
+            className="bg-[#A80808] text-white w-[350px] font-semibold rounded-xl"
+            onPress={handleCancel}
+            disabled={isSubmitting}
+          >
+            Batal
+          </Button>
         </div>
       </div>
 
-      {/* --- MODAL DINAMIS --- */}
       <Modal
         backdrop="blur"
         isOpen={isOpen}
@@ -205,8 +174,64 @@ const Verification = () => {
         <ModalContent>
           {(onClose) => (
             <>
-              {/* === KONDISI 1: ERROR LOKASI === */}
-              {isLocationInvalid ? (
+              {isSuccess ? (
+                /* KONDISI 1: SUKSES */
+                <>
+                  <ModalHeader className="flex flex-col items-center text-[#122C93] pt-8">
+                    <h2 className="text-[22px] font-bold">
+                      {resultData?.message || "Berhasil"}
+                    </h2>
+                  </ModalHeader>
+
+                  <ModalBody className="flex flex-col items-center gap-4 py-6">
+                    <div className="text-center">
+                      <p className="text-[24px] font-bold text-[#122C93]">
+                        {resultData?.data?.status}
+                      </p>
+                    </div>
+
+                    <div className="bg-gray-100 p-4 rounded-xl w-full text-center">
+                      <p className="text-[14px]">Waktu Pencatatan</p>
+                      <p className="text-[20px] font-bold">
+                        {formatTime(resultData?.data?.time)}
+                      </p>
+                    </div>
+
+                    <div className="flex flex-col items-center gap-1 w-full">
+                      <div className="flex justify-between w-full px-4 text-sm text-gray-600">
+                        <span>Jarak:</span>
+                        <span className="font-semibold">
+                          {resultData?.data?.distance} m
+                        </span>
+                      </div>
+                      <div className="w-full h-[1px] bg-gray-200 my-1"></div>
+                      <p
+                        className={`text-[18px] font-bold ${
+                          resultData?.data?.kategori === "Tepat Waktu"
+                            ? "text-green-600"
+                            : "text-orange-500"
+                        }`}
+                      >
+                        {resultData?.data?.kategori}
+                      </p>
+                    </div>
+                  </ModalBody>
+
+                  <ModalFooter className="flex justify-center pb-8">
+                    <Button
+                      color="primary"
+                      className="bg-[#122C93] text-white rounded-lg w-full h-12 font-semibold"
+                      onPress={() => {
+                        onClose();
+                        navigate("/");
+                      }}
+                    >
+                      Selesai
+                    </Button>
+                  </ModalFooter>
+                </>
+              ) : isLocationInvalid ? (
+                /* KONDISI 2: ERROR LOKASI */
                 <>
                   <ModalHeader className="flex flex-col items-center text-[#A80808] pt-8">
                     <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-2">
@@ -235,34 +260,16 @@ const Verification = () => {
                       Lokasi Tidak Valid
                     </h2>
                   </ModalHeader>
-
                   <ModalBody className="flex flex-col items-center gap-4 py-4 text-center">
                     <p className="text-[16px] text-gray-600 px-2">
                       Anda berada di luar jangkauan area presensi.
                     </p>
-                    <div className="bg-red-50 p-4 rounded-xl w-full border border-red-100 flex flex-col gap-2">
-                      <div className="flex justify-between items-center border-b border-red-200 pb-2">
-                        <span className="text-[14px] text-gray-600">
-                          Jarak Anda
-                        </span>
-                        <span className="text-[16px] font-bold text-[#A80808]">
-                          {resultData?.distance}
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center pt-1">
-                        <span className="text-[14px] text-gray-600">
-                          Maksimal
-                        </span>
-                        <span className="text-[16px] font-bold text-green-700">
-                          {resultData?.allowed}
-                        </span>
-                      </div>
+                    <div className="bg-red-50 p-4 rounded-xl w-full border border-red-100">
+                      <p className="text-sm text-red-800">
+                        {resultData?.message}
+                      </p>
                     </div>
-                    <p className="text-[13px] text-gray-400 italic">
-                      Silakan bergerak mendekat ke titik lokasi (Pos Utama).
-                    </p>
                   </ModalBody>
-
                   <ModalFooter className="flex justify-center pb-8 gap-3">
                     <Button
                       variant="bordered"
@@ -283,7 +290,7 @@ const Verification = () => {
                   </ModalFooter>
                 </>
               ) : isFaceMismatch ? (
-                /* === KONDISI 2: ERROR WAJAH === */
+                /* KONDISI 3: ERROR WAJAH */
                 <>
                   <ModalHeader className="flex flex-col items-center text-[#A80808] pt-8">
                     <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-2">
@@ -306,27 +313,24 @@ const Verification = () => {
                       Wajah Tidak Dikenali
                     </h2>
                   </ModalHeader>
-
                   <ModalBody className="flex flex-col items-center gap-4 py-4 text-center">
                     <p className="text-[16px] text-gray-600 px-2">
-                      Sistem mendeteksi kemiripan wajah terlalu rendah (
-                      {((resultData?.similarity || 0) * 100).toFixed(1)}%).
+                      Sistem gagal memverifikasi wajah Anda.
                     </p>
                     <div className="bg-red-50 p-4 rounded-xl w-full border border-red-100">
                       <p className="text-[14px] font-medium text-[#A80808]">
-                        Silakan periksa pencahayaan sekitar dan pastikan wajah
-                        Anda pas di dalam frame kamera.
+                        Silakan periksa pencahayaan dan pastikan wajah terlihat
+                        jelas.
                       </p>
                     </div>
                   </ModalBody>
-
                   <ModalFooter className="flex justify-center pb-8 gap-3">
                     <Button
                       variant="bordered"
                       className="border-[#122C93] text-[#122C93] w-full h-12 font-semibold"
                       onPress={onClose}
                     >
-                      Coba Kirim Ulang
+                      Coba Lagi
                     </Button>
                     <Button
                       className="bg-[#122C93] text-white w-full h-12 font-semibold"
@@ -340,7 +344,7 @@ const Verification = () => {
                   </ModalFooter>
                 </>
               ) : isNoSchedule ? (
-                /* === KONDISI 3: ERROR JADWAL === */
+                /* KONDISI 4: ERROR JADWAL */
                 <>
                   <ModalHeader className="flex flex-col items-center text-[#d97706] pt-8">
                     <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-2">
@@ -357,37 +361,21 @@ const Verification = () => {
                           strokeWidth={2}
                           d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                         />
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M6 18L18 6M6 6l12 12"
-                        />
                       </svg>
                     </div>
                     <h2 className="text-[22px] font-bold text-center">
                       Jadwal Tidak Ditemukan
                     </h2>
                   </ModalHeader>
-
-                  <ModalBody className="flex flex-col items-center gap-4 py-4 text-center">
-                    <p className="text-[16px] text-gray-600 px-2">
-                      Sistem tidak menemukan jadwal kerja untuk Anda hari ini.
-                    </p>
-                    <div className="bg-orange-50 p-4 rounded-xl w-full border border-orange-100">
-                      <p className="text-[14px] font-medium text-[#d97706] leading-relaxed">
-                        Pastikan Anda berada dijadwal yang benar dan pastikan
-                        kembali bahwa wajah Anda sudah teregistrasi di sistem.
-                      </p>
-                    </div>
+                  <ModalBody className="text-center py-4">
+                    <p>Tidak ada jadwal aktif saat ini.</p>
                   </ModalBody>
-
-                  <ModalFooter className="flex justify-center pb-8 gap-3">
+                  <ModalFooter className="flex justify-center pb-8">
                     <Button
                       className="bg-[#122C93] text-white w-full h-12 font-semibold"
                       onPress={() => {
                         onClose();
-                        handleCancel();
+                        navigate("/");
                       }}
                     >
                       Kembali
@@ -395,10 +383,9 @@ const Verification = () => {
                   </ModalFooter>
                 </>
               ) : isShiftCompleted ? (
-                /* === KONDISI 4: SHIFT SUDAH SELESAI (BARU) === */
+                /* KONDISI 5: SHIFT SELESAI */
                 <>
                   <ModalHeader className="flex flex-col items-center text-[#15803d] pt-8">
-                    {/* Icon Success/Completed Double Check */}
                     <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-2">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -419,24 +406,10 @@ const Verification = () => {
                       Absensi Tuntas
                     </h2>
                   </ModalHeader>
-
-                  <ModalBody className="flex flex-col items-center gap-4 py-4 text-center">
-                    <p className="text-[16px] text-gray-600 px-2">
-                      Anda sudah menyelesaikan shift hari ini.
-                    </p>
-
-                    <div className="bg-green-50 p-4 rounded-xl w-full border border-green-100">
-                      <p className="text-[14px] font-medium text-[#15803d] leading-relaxed">
-                        Data absen Masuk dan Pulang Anda sudah tercatat lengkap
-                        di sistem.
-                      </p>
-                    </div>
-                    <p className="text-[13px] text-gray-400 italic">
-                      Sampai jumpa di jadwal kerja berikutnya.
-                    </p>
+                  <ModalBody className="text-center py-4">
+                    <p>Anda sudah menyelesaikan shift hari ini.</p>
                   </ModalBody>
-
-                  <ModalFooter className="flex justify-center pb-8 gap-3">
+                  <ModalFooter className="flex justify-center pb-8">
                     <Button
                       className="bg-[#122C93] text-white w-full h-12 font-semibold"
                       onPress={() => {
@@ -448,8 +421,8 @@ const Verification = () => {
                     </Button>
                   </ModalFooter>
                 </>
-              ) : isServerError ? (
-                /* === KONDISI 5: ERROR JARINGAN / SERVER === */
+              ) : (
+                /* KONDISI 6: ERROR DEFAULT / SERVER */
                 <>
                   <ModalHeader className="flex flex-col items-center text-[#A80808] pt-8">
                     <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-2">
@@ -464,32 +437,20 @@ const Verification = () => {
                           strokeLinecap="round"
                           strokeLinejoin="round"
                           strokeWidth={2}
-                          d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"
-                        />
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M10 10l4 4m0-4l-4 4"
+                          d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
                         />
                       </svg>
                     </div>
-                    <h2 className="text-[22px] font-bold text-center">
-                      Kesalahan Sistem
-                    </h2>
+                    <h2 className="text-[22px] font-bold text-center">Gagal</h2>
                   </ModalHeader>
 
                   <ModalBody className="flex flex-col items-center gap-4 py-4 text-center">
                     <p className="text-[16px] text-gray-600 px-2">
-                      Terjadi gangguan saat menghubungi server.
+                      Terjadi kesalahan saat memproses absensi.
                     </p>
                     <div className="bg-red-50 p-4 rounded-xl w-full border border-red-100">
                       <p className="text-[14px] font-medium text-[#A80808]">
-                        {resultData?.message === "NETWORK_ERROR"
-                          ? "Gagal terhubung ke jaringan. Pastikan koneksi internet Anda stabil."
-                          : resultData?.message === "SERVER_ERROR_DEFAULT"
-                          ? "Terjadi kesalahan internal pada server."
-                          : resultData?.message}
+                        {resultData?.message || "Internal Server Error"}
                       </p>
                     </div>
                   </ModalBody>
@@ -510,56 +471,6 @@ const Verification = () => {
                       }}
                     >
                       Coba Lagi
-                    </Button>
-                  </ModalFooter>
-                </>
-              ) : (
-                /* === KONDISI 6: SUKSES (DEFAULT) === */
-                <>
-                  <ModalHeader className="flex flex-col items-center text-[#122C93] pt-8">
-                    <h2 className="text-[22px] font-bold">
-                      {resultData?.message || "Berhasil"}
-                    </h2>
-                  </ModalHeader>
-
-                  <ModalBody className="flex flex-col items-center gap-4 py-6">
-                    <div className="text-center">
-                      <p className="text-[18px] font-semibold">
-                        {resultData?.nama}
-                      </p>
-                      <p className="text-[16px] text-gray-500">
-                        {resultData?.nip}
-                      </p>
-                    </div>
-
-                    <div className="bg-gray-100 p-4 rounded-xl w-full text-center">
-                      <p className="text-[14px]">Waktu Absensi</p>
-                      <p className="text-[20px] font-bold">
-                        {resultData?.time}
-                      </p>
-                    </div>
-
-                    <p
-                      className={`text-[18px] font-bold ${
-                        resultData?.status === "tepat waktu"
-                          ? "text-green-600"
-                          : "text-orange-500"
-                      }`}
-                    >
-                      {resultData?.status?.toUpperCase()}
-                    </p>
-                  </ModalBody>
-
-                  <ModalFooter className="flex justify-center pb-8">
-                    <Button
-                      color="primary"
-                      className="bg-[#122C93] text-white rounded-lg w-full h-12 font-semibold"
-                      onPress={() => {
-                        onClose();
-                        navigate("/");
-                      }}
-                    >
-                      Selesai
                     </Button>
                   </ModalFooter>
                 </>

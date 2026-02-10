@@ -29,20 +29,23 @@ const TakePhoto = () => {
 
   const takePhoto = () => {
     if (!videoRef.current || !canvasRef.current) return;
+
+    const geoOptions = {
+    enableHighAccuracy: true, 
+    timeout: 10000,           
+    maximumAge: 0            
+  };
     
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setLocation({
-            latitude: position.coords.latitude.toString(),
-            longitude: position.coords.longitude.toString(),
-          });
-        },
-        (err) => {
-          console.error("Gagal ambil lokasi", err);
-        }
-      );
-    }
+    navigator.geolocation.getCurrentPosition(
+    (position) => {
+      setLocation({
+        latitude: position.coords.latitude.toString(),
+        longitude: position.coords.longitude.toString(),
+      });
+    },
+    (err) => console.error("Gagal ambil lokasi", err),
+    geoOptions
+  );
 
     const video = videoRef.current;
     const canvas = canvasRef.current;
