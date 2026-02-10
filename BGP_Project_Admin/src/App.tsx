@@ -1,20 +1,20 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "leaflet/dist/leaflet.css";
 import Mainlayouts from "./Layout/Mainlayouts";
-import Login from "./Pages/Auth/Login";
-import AdminManageSatpam from "./Pages/AdminManageSatpam";
-import AdminManageAdmin from "./Pages/AdminManageAdmin";
-import AdminManageShift from "./Pages/AdminManageShift";
-import AdminManagePos from "./Pages/AdminManagePos";
-import PrivateRoute from "./Pages/Utils/PrivateRoute";
-// import AdminDownloadRekap from "./Pages/AdminDownloadRekap";
-import AdminManagePosUtama from "./Pages/AdminManagePosUtama";
-// import AdminManagePatroli from "./Pages/AdminManagePatroli";
-import AdminManageRadius from "./Pages/AdminManageRadius";
-import AdminDashboard from "./Pages/AdminDashboard";
-import AdminManageWaktuJadwal from "./Pages/AdminManageWaktuJadwal";
-import AdminRekapAbsensi from "./Pages/AdminRekapAbsensi";
-import AdminRekapPatroli from "./Pages/AdminRekapPatroli";
+import Login from "./Auth/Login";
+
+import PrivateRoute from "./Utils/PrivateRoute";
+
+import AdminManageUsers from "./pages/AdminManageUsers";
+import AdminManageSatpam from "./pages/AdminManageSatpam";
+import AdminDashboard from "./pages/AdminDashboard";
+import AdminManageShift from "./pages/AdminManageShift";
+import AdminManagePos from "./pages/AdminManagePos";
+import AdminManagePosUtama from "./pages/AdminManagePosUtama";
+import AdminRekapAbsensi from "./pages/AdminRekapAbsensi";
+import AdminRekapPatroli from "./pages/AdminRekapPatroli";
+import AdminManageRadius from "./pages/AdminManageRadius";
+import AdminManageWaktuJadwal from "./pages/AdminManageWaktuJadwal";
 function App() {
   return (
     <Router>
@@ -27,21 +27,13 @@ function App() {
           <Route element={<Mainlayouts />}>
             <Route path="/AdminDashboard" element={<AdminDashboard />} />
             <Route path="/AdminManageSatpam" element={<AdminManageSatpam />} />
-            <Route path="/AdminManageAdmin" element={<AdminManageAdmin />} />
+            <Route path="/AdminManageUsers" element={<AdminManageUsers />} />
             <Route path="/AdminManageShift" element={<AdminManageShift />} />
             <Route path="/AdminManagePos" element={<AdminManagePos />} />
             <Route
               path="/AdminManagePosUtama"
               element={<AdminManagePosUtama />}
             />
-            {/* <Route
-              path="/AdminManagePosPatroli"
-              element={<AdminManagePatroli />}
-            /> */}
-            {/* <Route
-              path="/AdminDownloadRekap"
-              element={<AdminDownloadRekap />}
-            /> */}
             <Route path="/AdminRekapAbsensi" element={<AdminRekapAbsensi />} />
             <Route path="/AdminRekapPatroli" element={<AdminRekapPatroli />} />
             <Route path="/AdminManageRadius" element={<AdminManageRadius />} />

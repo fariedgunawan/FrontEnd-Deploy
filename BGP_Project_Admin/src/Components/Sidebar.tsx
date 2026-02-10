@@ -11,10 +11,7 @@ import {
   LuScanFace,
 } from "react-icons/lu";
 
-import {
-  MdCoPresent,
-  MdOutlineLockClock,
-} from "react-icons/md";
+import { MdCoPresent, MdOutlineLockClock } from "react-icons/md";
 import {
   TbLogout,
   TbLayoutDashboardFilled,
@@ -50,7 +47,7 @@ const Sidebar = () => {
       key: "manage-admin",
       name: "Manage Client",
       icon: <IoMdSettings className="text-xl" />,
-      path: "/AdminManageAdmin",
+      path: "/AdminManageUsers",
       hidden: role !== "Admin",
     },
     {
