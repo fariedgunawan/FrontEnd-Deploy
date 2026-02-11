@@ -122,7 +122,7 @@ export const SatpamFormModal = ({
               actions.resetForm();
             }}
           >
-            Batal -
+            Batal
           </Button>
           <Button
             className="bg-[#122C93] text-white"
@@ -134,7 +134,7 @@ export const SatpamFormModal = ({
             ) : isEditMode ? (
               "Update"
             ) : (
-              "Simpan +"
+              "Simpan"
             )}
           </Button>
         </ModalFooter>

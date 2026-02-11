@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { parseDate } from "@internationalized/date";
 import { scheduleService } from "../services/scheduleService";
 import type {
@@ -25,7 +25,6 @@ export const useScheduleForm = ({
   listSatpam,
   listPos,
   listShift,
-  dataJadwal,
 }: UseScheduleFormProps) => {
   const [formData, setFormData] = useState<FormData>({
     satpam_uuid: "",
@@ -33,12 +32,15 @@ export const useScheduleForm = ({
     shift_uuid: "",
     tanggal: null,
   });
+
+  const [rawBackendData, setRawBackendData] = useState<any | null>(null);
   const [errors, setErrors] = useState<any>({});
   const [selectedUuid, setSelectedUuid] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const resetForm = () => {
     setSelectedUuid(null);
+    setRawBackendData(null);
     setFormData({
       satpam_uuid: "",
       pos_uuid: "",
@@ -51,42 +53,54 @@ export const useScheduleForm = ({
   const loadData = async (uuid: string) => {
     setSelectedUuid(uuid);
     setErrors({});
-
-    // Fallback data from table while fetching
-    const existingItem = dataJadwal.find((item) => item.uuid === uuid);
-    if (existingItem) {
-      const foundSatpam = listSatpam.find(
-        (s) => s.nama === existingItem.satpam_name,
-      );
-      const foundPos = listPos.find((p) => p.nama === existingItem.nama_pos);
-      const foundShift = listShift.find(
-        (s) =>
-          s.nama === existingItem.shift_nama && s.mulai === existingItem.mulai,
-      );
-
-      setFormData({
-        satpam_uuid: foundSatpam ? foundSatpam.uuid : "",
-        pos_uuid: foundPos ? foundPos.uuid : "",
-        shift_uuid: foundShift ? foundShift.uuid : "",
-        tanggal: existingItem.tanggal ? parseDate(existingItem.tanggal) : null,
-      });
-    }
+    setIsSubmitting(true);
 
     try {
       const res = await scheduleService.getById(uuid);
       const item = res.data || res;
-      if (item && item.satpam_uuid && item.pos_uuid && item.shift_uuid) {
-        setFormData({
-          satpam_uuid: item.satpam_uuid,
-          pos_uuid: item.pos_uuid,
-          shift_uuid: item.shift_uuid,
-          tanggal: item.tanggal ? parseDate(item.tanggal.split("T")[0]) : null,
-        });
-      }
+      setRawBackendData(item);
     } catch (error) {
-      console.error("Error fetching detail, using fallback data:", error);
+      console.error("Error fetching detail:", error);
+      addToast({
+        title: "Gagal",
+        description: "Gagal mengambil data jadwal",
+        color: "danger",
+      });
+    } finally {
+      setIsSubmitting(false);
     }
   };
+
+  useEffect(() => {
+    if (!rawBackendData) return;
+    const item = rawBackendData;
+    const foundSatpam = listSatpam.find(
+      (s) => s.nama.toLowerCase() === item.satpam_name?.toLowerCase(),
+    );
+    const foundPos = listPos.find(
+      (p) => p.nama.toLowerCase() === item.nama_pos?.toLowerCase(),
+    );
+    const foundShift = listShift.find(
+      (s) => s.nama.toLowerCase() === item.shift_nama?.toLowerCase(),
+    );
+    let parsedDate = null;
+    if (item.tanggal) {
+      try {
+        const dateStr = String(item.tanggal).split("T")[0];
+        parsedDate = parseDate(dateStr);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    setFormData((prev) => ({
+      ...prev,
+      satpam_uuid: foundSatpam ? foundSatpam.uuid : prev.satpam_uuid,
+      pos_uuid: foundPos ? foundPos.uuid : prev.pos_uuid,
+      shift_uuid: foundShift ? foundShift.uuid : prev.shift_uuid,
+      tanggal: parsedDate || prev.tanggal,
+    }));
+  }, [rawBackendData, listSatpam, listPos, listShift]);
 
   const validateForm = () => {
     const newErrors: any = {};

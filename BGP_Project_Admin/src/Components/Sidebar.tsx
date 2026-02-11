@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Listbox, ListboxItem, Button, Divider, Tooltip } from "@heroui/react";
+import { Divider } from "@heroui/react";
 import { IoMdSettings, IoMdPhotos } from "react-icons/io";
 import { GiPoliceOfficerHead } from "react-icons/gi";
 import { GoClockFill } from "react-icons/go";
@@ -115,6 +115,7 @@ const Sidebar = () => {
         ${isCollapsed ? "w-[88px]" : "w-[280px]"}
       `}
     >
+      {/* Toggle Button */}
       <button
         onClick={() => setIsCollapsed(!isCollapsed)}
         className="absolute -right-3 top-[50%] bg-white border border-gray-200 text-gray-500 rounded-full p-1 shadow-sm hover:text-[#122C93] hover:border-[#122C93] transition-colors z-50"
@@ -130,7 +131,6 @@ const Sidebar = () => {
           <img src={logo} alt="Logo" className="w-full h-full object-contain" />
         </div>
 
-        {/* Teks Header - Hide saat collapsed */}
         <div
           className={`flex flex-col overflow-hidden transition-all duration-300 ${
             isCollapsed ? "w-0 opacity-0 ml-0" : "w-auto opacity-100"
@@ -145,7 +145,7 @@ const Sidebar = () => {
         </div>
       </div>
 
-      {/* --- Menu Section --- */}
+      {/* --- Menu Section (Manual Implementation) --- */}
       <div className="flex-1 overflow-y-auto px-4 py-2 scrollbar-hide">
         {!isCollapsed && (
           <div className="mb-2 px-2 text-xs font-semibold text-gray-400 uppercase tracking-wider transition-opacity duration-300">
@@ -153,65 +153,37 @@ const Sidebar = () => {
           </div>
         )}
 
-        <Listbox
-          aria-label="Sidebar Menu"
-          variant="light"
-          className="p-0 gap-1"
-        >
+        <div className="flex flex-col gap-3">
           {filteredMenu.map((item) => {
             const isActive = location.pathname === item.path;
 
             return (
-              <ListboxItem
+              <button
                 key={item.key}
-                textValue={item.name}
-                onPress={() => navigate(item.path)}
-                startContent={
-                  <div
-                    className={`flex items-center justify-center ${isCollapsed ? "w-full" : ""}`}
-                  >
-                    {isCollapsed ? (
-                      <Tooltip
-                        content={item.name}
-                        placement="right"
-                        color="foreground"
-                      >
-                        <span
-                          className={`text-xl transition-colors duration-200 ${
-                            isActive
-                              ? "text-white"
-                              : "text-gray-400 group-data-[hover=true]:text-[#122C93]"
-                          }`}
-                        >
-                          {item.icon}
-                        </span>
-                      </Tooltip>
-                    ) : (
-                      <span
-                        className={`text-xl transition-colors duration-200 ${
-                          isActive
-                            ? "text-white"
-                            : "text-gray-400 group-data-[hover=true]:text-[#122C93]"
-                        }`}
-                      >
-                        {item.icon}
-                      </span>
-                    )}
-                  </div>
-                }
+                onClick={() => navigate(item.path)}
                 className={`
-                  group my-1 py-3 px-3 rounded-xl transition-all duration-200
+                  group relative flex items-center w-full outline-none
+                  py-3 px-3 rounded-xl transition-all duration-200
                   ${
                     isActive
-                      ? "bg-[#122C93] text-white shadow-md shadow-blue-900/30 data-[hover=true]:bg-[#122C93] data-[hover=true]:text-white"
-                      : "bg-transparent text-gray-500 data-[hover=true]:bg-blue-50 data-[hover=true]:text-[#122C93]"
+                      ? "bg-[#122C93] text-white shadow-md shadow-blue-900/30"
+                      : "bg-transparent text-gray-500 hover:bg-blue-50 hover:text-[#122C93]"
                   }
-                  ${isCollapsed ? "justify-center gap-0 px-0" : "gap-2"} 
+                  ${isCollapsed ? "justify-center" : "justify-start gap-2"}
                 `}
               >
-                {/* Teks Menu - Hide saat collapsed */}
+                {/* Icon Wrapper */}
+                <div
+                  className={`flex items-center justify-center ${isCollapsed ? "w-full" : ""}`}
+                >
+                  <span className={`text-xl transition-colors duration-200`}>
+                    {item.icon}
+                  </span>
+                </div>
+
+                {/* Text Menu - Hide saat collapsed */}
                 <span
-                  className={`font-medium text-sm ml-2 transition-all duration-200 ${
+                  className={`font-medium text-sm ml-2 whitespace-nowrap transition-all duration-200 ${
                     isCollapsed
                       ? "hidden opacity-0 w-0"
                       : "block opacity-100 w-auto"
@@ -219,34 +191,62 @@ const Sidebar = () => {
                 >
                   {item.name}
                 </span>
-              </ListboxItem>
+
+                {/* Manual Tooltip (Only visible when collapsed + hover) */}
+                {isCollapsed && (
+                  <div
+                    className="
+                      absolute left-full ml-3 px-2 py-1.5 
+                      bg-gray-800 text-white text-xs rounded-md 
+                      opacity-0 group-hover:opacity-100 
+                      pointer-events-none transition-opacity duration-200 z-50
+                      whitespace-nowrap shadow-lg
+                    "
+                  >
+                    {item.name}
+                    {/* Panah kecil tooltip (opsional) */}
+                    <div className="absolute top-1/2 -left-1 -mt-1 border-4 border-transparent border-r-gray-800"></div>
+                  </div>
+                )}
+              </button>
             );
           })}
-        </Listbox>
+        </div>
       </div>
 
-      {/* --- Footer Logout Section --- */}
+      {/* --- Footer Logout Section (Manual Implementation) --- */}
       <div className="p-4 mt-auto">
         <Divider className="mb-4" />
-        <Button
-          variant="light"
-          color="danger"
-          startContent={!isCollapsed && <TbLogout className="text-xl" />}
-          onPress={handleLogout}
-          isIconOnly={isCollapsed}
+
+        <button
+          onClick={handleLogout}
           className={`
-            font-semibold hover:bg-red-50 data-[hover=true]:bg-red-50 transition-colors
-            ${isCollapsed ? "w-full h-12 flex items-center justify-center" : "w-full justify-start h-12"}
+            group relative flex items-center outline-none
+            text-danger rounded-xl
+            hover:bg-red-50 transition-colors duration-200
+            ${isCollapsed ? "w-full h-12 justify-center" : "w-full h-12 px-4 justify-start gap-2"}
           `}
         >
-          {isCollapsed ? (
-            <Tooltip content="Keluar" placement="right" color="danger">
-              <TbLogout className="text-xl" />
-            </Tooltip>
-          ) : (
-            "Keluar"
+          <TbLogout className="text-xl text-red-500" />
+
+          {!isCollapsed && <span className="text-red-500">Keluar</span>}
+
+          {/* Manual Tooltip untuk Logout */}
+          {isCollapsed && (
+            <div
+              className="
+                absolute left-full ml-3 px-2 py-1.5 
+                bg-red-500 text-white text-xs rounded-md 
+                opacity-0 group-hover:opacity-100 
+                pointer-events-none transition-opacity duration-200 z-50
+                whitespace-nowrap shadow-lg
+              "
+            >
+              Keluar
+              <div className="absolute top-1/2 -left-1 -mt-1 border-4 border-transparent border-r-red-500"></div>
+            </div>
           )}
-        </Button>
+        </button>
 
         {!isCollapsed && (
           <div className="text-center mt-2 text-[10px] text-gray-300 whitespace-nowrap overflow-hidden">

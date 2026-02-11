@@ -79,14 +79,14 @@ export const AddUserModal = ({
         </ModalBody>
         <ModalFooter className="flex justify-center gap-5">
           <Button color="danger" variant="light" onPress={handleClose}>
-            Batal -
+            Batal
           </Button>
           <Button
             variant="solid"
             className="bg-[#122C93] text-white"
             onPress={handleSubmit}
           >
-            Simpan +
+            Simpan
           </Button>
         </ModalFooter>
       </ModalContent>
