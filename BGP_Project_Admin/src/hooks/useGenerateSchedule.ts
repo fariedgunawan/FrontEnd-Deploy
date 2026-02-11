@@ -15,6 +15,7 @@ export const useGenerateSchedule = (
     end_date: null,
     days_of_week: [],
   });
+
   const [errors, setErrors] = useState<any>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -30,6 +31,7 @@ export const useGenerateSchedule = (
     if (!generateData.shift_uuid) newErrors.shift_uuid = "Shift wajib dipilih";
     if (generateData.days_of_week.length === 0)
       newErrors.days_of_week = "Pilih minimal satu hari kerja";
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -40,7 +42,6 @@ export const useGenerateSchedule = (
         title: "Validasi Gagal",
         description: "Lengkapi form generate",
         color: "warning",
-        variant: "flat",
       });
       return;
     }
@@ -61,7 +62,6 @@ export const useGenerateSchedule = (
         title: "Berhasil",
         description: "Jadwal rutin berhasil dibuat",
         color: "success",
-        variant: "flat",
       });
       onSuccess();
       onClose();
@@ -70,7 +70,6 @@ export const useGenerateSchedule = (
         title: "Gagal generate",
         description: error.message,
         color: "danger",
-        variant: "flat",
       });
     } finally {
       setIsSubmitting(false);

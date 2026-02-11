@@ -31,7 +31,6 @@ export const useScheduleData = () => {
       addToast({
         title: "Gagal memuat jadwal",
         color: "danger",
-        variant: "flat",
       });
     } finally {
       setIsLoading(false);
@@ -56,7 +55,6 @@ export const useScheduleData = () => {
         title: "Berhasil",
         description: "Data shift berhasil dihapus",
         color: "danger",
-        variant: "flat",
       });
       fetchJadwal();
       setDeleteModalOpen(false);
@@ -65,7 +63,6 @@ export const useScheduleData = () => {
         title: "Gagal",
         description: "Gagal menghapus data shift",
         color: "danger",
-        variant: "flat",
       });
     } finally {
       setIsDeleting(false);

@@ -74,8 +74,8 @@ export const useScheduleForm = ({
 
     try {
       const res = await scheduleService.getById(uuid);
-      const item = res.data;
-      if (item) {
+      const item = res.data || res;
+      if (item && item.satpam_uuid && item.pos_uuid && item.shift_uuid) {
         setFormData({
           satpam_uuid: item.satpam_uuid,
           pos_uuid: item.pos_uuid,
@@ -84,7 +84,7 @@ export const useScheduleForm = ({
         });
       }
     } catch (error) {
-      console.error("Error fetching detail:", error);
+      console.error("Error fetching detail, using fallback data:", error);
     }
   };
 
@@ -104,13 +104,12 @@ export const useScheduleForm = ({
         title: "Validasi Gagal",
         description: "Periksa kembali inputan anda",
         color: "warning",
-        variant: "flat",
       });
       return;
     }
 
     setIsSubmitting(true);
-    const payload = {
+    const body = {
       satpam_uuid: formData.satpam_uuid,
       pos_uuid: formData.pos_uuid,
       shift_uuid: formData.shift_uuid,
@@ -119,16 +118,15 @@ export const useScheduleForm = ({
 
     try {
       if (selectedUuid) {
-        await scheduleService.update(selectedUuid, payload);
+        await scheduleService.update(selectedUuid, body);
       } else {
-        await scheduleService.create(payload);
+        await scheduleService.create(body);
       }
 
       addToast({
         title: "Berhasil",
         description: `Data berhasil ${selectedUuid ? "diubah" : "ditambahkan"}`,
         color: "success",
-        variant: "flat",
       });
       onSuccess();
       onClose();
@@ -137,7 +135,6 @@ export const useScheduleForm = ({
         title: "Gagal",
         description: error.message,
         color: "danger",
-        variant: "flat",
       });
     } finally {
       setIsSubmitting(false);

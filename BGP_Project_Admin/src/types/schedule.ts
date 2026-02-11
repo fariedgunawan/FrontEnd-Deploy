@@ -36,27 +36,8 @@ export interface ScheduleResponse {
     pagination?: {
       total_pages: number;
       items_per_page: number;
-      current_page: number;
-      total_items: number;
     };
   };
-  message?: string;
-}
-
-export interface CreateSchedulePayload {
-  satpam_uuid: string;
-  pos_uuid: string;
-  shift_uuid: string;
-  tanggal: string;
-}
-
-export interface GenerateSchedulePayload {
-  satpam_uuid: string;
-  pos_uuid: string;
-  shift_uuid: string;
-  start_date: string;
-  end_date: string;
-  days_of_week: number[];
 }
 
 export interface FormData {

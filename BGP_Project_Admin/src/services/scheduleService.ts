@@ -1,12 +1,10 @@
+import { getToken } from "../Utils/helpers";
 import type {
   ScheduleResponse,
-  CreateSchedulePayload,
-  GenerateSchedulePayload,
   SatpamOption,
   ShiftOption,
   PosOption,
 } from "../types/schedule";
-import { getToken } from "../Utils/helpers";
 
 const BASE_URL_API = import.meta.env.VITE_API_BASE_URL;
 
@@ -20,63 +18,14 @@ export const scheduleService = {
     const res = await fetch(`${BASE_URL_API}/v1/jadwal/?pid=${page}`, {
       headers: { Authorization: `Bearer ${getToken()}` },
     });
-    if (!res.ok) throw new Error("Gagal memuat jadwal");
     return res.json();
   },
 
-  getById: async (uuid: string): Promise<{ data: any }> => {
+  getById: async (uuid: string) => {
     const res = await fetch(`${BASE_URL_API}/v1/jadwal/${uuid}`, {
       headers: { Authorization: `Bearer ${getToken()}` },
     });
-    if (!res.ok) throw new Error("Gagal mengambil detail jadwal");
     return res.json();
-  },
-
-  create: async (payload: CreateSchedulePayload): Promise<void> => {
-    const res = await fetch(`${BASE_URL_API}/v1/jadwal/`, {
-      method: "POST",
-      headers: getHeaders(),
-      body: JSON.stringify(payload),
-    });
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.message || "Gagal menyimpan");
-    }
-  },
-
-  update: async (
-    uuid: string,
-    payload: CreateSchedulePayload,
-  ): Promise<void> => {
-    const res = await fetch(`${BASE_URL_API}/v1/jadwal/${uuid}`, {
-      method: "PUT",
-      headers: getHeaders(),
-      body: JSON.stringify(payload),
-    });
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.message || "Gagal menyimpan");
-    }
-  },
-
-  delete: async (uuid: string): Promise<void> => {
-    const res = await fetch(`${BASE_URL_API}/v1/jadwal/${uuid}`, {
-      method: "DELETE",
-      headers: { Authorization: `Bearer ${getToken()}` },
-    });
-    if (!res.ok) throw new Error("Gagal menghapus");
-  },
-
-  generate: async (payload: GenerateSchedulePayload): Promise<void> => {
-    const res = await fetch(`${BASE_URL_API}/v1/jadwal/generate`, {
-      method: "POST",
-      headers: getHeaders(),
-      body: JSON.stringify(payload),
-    });
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.message || "Gagal generate jadwal");
-    }
   },
 
   getOptions: async (): Promise<{
@@ -100,5 +49,53 @@ export const scheduleService = {
       shifts: dShift.data || [],
       pos: dPos.data || [],
     };
+  },
+
+  create: async (payload: any) => {
+    const res = await fetch(`${BASE_URL_API}/v1/jadwal/`, {
+      method: "POST",
+      headers: getHeaders(),
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.message || "Gagal menyimpan");
+    }
+    return res;
+  },
+
+  update: async (uuid: string, payload: any) => {
+    const res = await fetch(`${BASE_URL_API}/v1/jadwal/${uuid}`, {
+      method: "PUT",
+      headers: getHeaders(),
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.message || "Gagal menyimpan");
+    }
+    return res;
+  },
+
+  delete: async (uuid: string) => {
+    const res = await fetch(`${BASE_URL_API}/v1/jadwal/${uuid}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${getToken()}` },
+    });
+    if (!res.ok) throw new Error("Gagal menghapus");
+    return res;
+  },
+
+  generate: async (payload: any) => {
+    const res = await fetch(`${BASE_URL_API}/v1/jadwal/generate`, {
+      method: "POST",
+      headers: getHeaders(),
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.message || "Gagal generate jadwal");
+    }
+    return res;
   },
 };
