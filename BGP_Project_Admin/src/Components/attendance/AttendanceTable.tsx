@@ -8,11 +8,9 @@ import {
   Pagination,
   Spinner,
   Button,
-  Chip,
 } from "@heroui/react";
 import { FaEdit } from "react-icons/fa";
 import type { Absensi } from "../../types/attendance";
-import { formatDateTime } from "../../Utils/helpers";
 
 interface AttendanceTableProps {
   data: Absensi[];
@@ -24,18 +22,18 @@ interface AttendanceTableProps {
   onEdit: (uuid: string) => void;
 }
 
-const getCategoryColor = (kategori: string) => {
+const getCategoryStyles = (kategori: string) => {
   switch (kategori) {
     case "Tepat Waktu":
-      return "success";
+      return "bg-green-100 text-green-700";
     case "Terlambat":
-      return "warning";
+      return "bg-yellow-100 text-yellow-800";
     case "Alpha":
-      return "danger";
+      return "bg-red-100 text-red-700";
     case "Izin":
-      return "primary";
+      return "bg-blue-100 text-blue-700";
     default:
-      return "default";
+      return "bg-gray-100 text-gray-700";
   }
 };
 
@@ -88,16 +86,14 @@ export const AttendanceTable = ({
             <TableCell>{item.nama_satpam}</TableCell>
             <TableCell>{item.nip}</TableCell>
             <TableCell>
-              <Chip
-                color={getCategoryColor(item.kategori)}
-                variant="flat"
-                size="sm"
+              <span
+                className={`px-3 py-1 rounded-full text-xs font-semibold ${getCategoryStyles(item.kategori)}`}
               >
                 {item.kategori}
-              </Chip>
+              </span>
             </TableCell>
-            <TableCell>{formatDateTime(item.check_in)}</TableCell>
-            <TableCell>{formatDateTime(item.check_out)}</TableCell>
+            <TableCell>{item.check_in}</TableCell>
+            <TableCell>{item.check_out}</TableCell>
             <TableCell className="text-center">
               <Button
                 size="sm"

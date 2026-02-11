@@ -5,7 +5,6 @@ import type {
   SatpamOption,
   ShiftOption,
   PosOption,
-  Jadwal,
 } from "../types/schedule";
 import { getToken } from "../Utils/helpers";
 

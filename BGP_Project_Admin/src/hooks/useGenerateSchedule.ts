@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { CalendarDate } from "@internationalized/date";
 import { scheduleService } from "../services/scheduleService";
 import type { GenerateFormData } from "../types/schedule";
 import { addToast } from "@heroui/react";

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CalendarDate, parseDate } from "@internationalized/date";
+import { parseDate } from "@internationalized/date";
 import { scheduleService } from "../services/scheduleService";
 import type {
   FormData,
