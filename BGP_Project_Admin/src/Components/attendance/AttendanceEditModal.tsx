@@ -35,7 +35,7 @@ export const AttendanceEditModal = ({
               label="Waktu Check In"
               type="datetime-local"
               variant="underlined"
-              labelPlacement="outside"
+              labelPlacement="inside"
               value={formData.check_in}
               onChange={(e) =>
                 setFormData({ ...formData, check_in: e.target.value })
@@ -45,7 +45,7 @@ export const AttendanceEditModal = ({
               label="Waktu Check Out"
               type="datetime-local"
               variant="underlined"
-              labelPlacement="outside"
+              labelPlacement="inside"
               value={formData.check_out}
               onChange={(e) =>
                 setFormData({ ...formData, check_out: e.target.value })
@@ -54,7 +54,7 @@ export const AttendanceEditModal = ({
             <Select
               label="Kategori Kehadiran"
               variant="underlined"
-              labelPlacement="outside"
+              labelPlacement="inside"
               placeholder="Pilih Kategori"
               selectedKeys={formData.kategori ? [formData.kategori] : []}
               onChange={(e) =>

@@ -36,7 +36,7 @@ export const MitraAssignmentModal = ({
               label="Pilih Mitra"
               placeholder="Pilih mitra atau lepas tugas"
               variant="underlined"
-              labelPlacement="outside-top"
+              labelPlacement="inside"
               size="lg"
               selectedKeys={formMitraId ? [formMitraId] : []}
               onChange={(e) => setFormMitraId(e.target.value)}

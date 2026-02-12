@@ -59,7 +59,7 @@ export const GenerateScheduleModal = ({
               <DatePicker
                 label="Tanggal Mulai"
                 variant="underlined"
-                labelPlacement="outside"
+                labelPlacement="inside"
                 isInvalid={!!errors.start_date}
                 errorMessage={errors.start_date}
                 onChange={(d) => {
@@ -74,7 +74,7 @@ export const GenerateScheduleModal = ({
               <DatePicker
                 label="Tanggal Berakhir"
                 variant="underlined"
-                labelPlacement="outside"
+                labelPlacement="inside"
                 isInvalid={!!errors.end_date}
                 errorMessage={errors.end_date}
                 onChange={(d) => {
@@ -89,7 +89,7 @@ export const GenerateScheduleModal = ({
               <Select
                 label="Pos"
                 variant="underlined"
-                labelPlacement="outside"
+                labelPlacement="inside"
                 placeholder="Pilih Pos"
                 isInvalid={!!errors.pos_uuid}
                 errorMessage={errors.pos_uuid}
@@ -116,7 +116,7 @@ export const GenerateScheduleModal = ({
               <Select
                 label="Satpam"
                 variant="underlined"
-                labelPlacement="outside"
+                labelPlacement="inside"
                 placeholder="Pilih Personel"
                 isInvalid={!!errors.satpam_uuid}
                 errorMessage={errors.satpam_uuid}
@@ -142,7 +142,7 @@ export const GenerateScheduleModal = ({
               <Select
                 label="Shift"
                 variant="underlined"
-                labelPlacement="outside"
+                labelPlacement="inside"
                 placeholder="Pilih Shift Kerja"
                 isInvalid={!!errors.shift_uuid}
                 errorMessage={errors.shift_uuid}

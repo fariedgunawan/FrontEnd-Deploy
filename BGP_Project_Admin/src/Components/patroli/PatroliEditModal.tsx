@@ -36,7 +36,7 @@ export const PatroliEditModal = ({
             <Select
               label="Status Lokasi"
               variant="underlined"
-              labelPlacement="outside"
+              labelPlacement="inside"
               placeholder="Pilih Status"
               selectedKeys={
                 formData.status_lokasi ? [formData.status_lokasi] : []
@@ -51,7 +51,7 @@ export const PatroliEditModal = ({
             <Input
               label="Keterangan"
               variant="underlined"
-              labelPlacement="outside"
+              labelPlacement="inside"
               placeholder="Keterangan situasi..."
               value={formData.keterangan}
               onChange={(e) =>
