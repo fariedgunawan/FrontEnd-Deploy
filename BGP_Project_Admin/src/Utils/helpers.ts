@@ -5,14 +5,6 @@ export const getToken = (): string | undefined => {
     ?.split("=")[1];
 };
 
-export const formatDate = (dateString: string): string => {
-  const d = new Date(dateString);
-  const day = String(d.getDate()).padStart(2, "0");
-  const month = String(d.getMonth() + 1).padStart(2, "0");
-  const year = String(d.getFullYear());
-  return `${day}/${month}/${year}`;
-};
-
 export const getRole = (): string | undefined => {
   const role = document.cookie
     .split("; ")
@@ -23,20 +15,20 @@ export const getRole = (): string | undefined => {
 
 export const formatTanggal = (dateString?: string): string => {
   if (!dateString) return "-";
-  const date = new Date(dateString);
-  const day = String(date.getDate()).padStart(2, "0");
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const year = String(date.getFullYear());
-  return `${day}/${month}/${year}`;
-};
+  const safeDateString = dateString.endsWith("Z")
+    ? dateString
+    : `${dateString}Z`;
 
-export const formatDateIND = (dateString?: string): string => {
-  if (!dateString) return "-";
-  return new Date(dateString).toLocaleDateString("id-ID", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-  });
+  try {
+    const date = new Date(safeDateString);
+    if (isNaN(date.getTime())) return "-";
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = String(date.getFullYear());
+    return `${day}/${month}/${year}`;
+  } catch (error) {
+    return "-";
+  }
 };
 
 export const getDeviceTimezone = (): string => {
@@ -47,18 +39,51 @@ export const getDeviceTimezone = (): string => {
   }
 };
 
+export const formatDateTimeZone = (isoString: string | null): string => {
+  if (!isoString) return "-";
+  const safeDateString = isoString.endsWith("Z") ? isoString : `${isoString}Z`;
+
+  try {
+    const date = new Date(safeDateString);
+    if (isNaN(date.getTime())) return isoString;
+    return new Intl.DateTimeFormat("id-ID", {
+      year: "numeric",
+      month: "short",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+      timeZone:
+        Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Jakarta",
+    }).format(date);
+  } catch (error) {
+    return isoString;
+  }
+};
+
 export const getHari = (dateString: string) => {
   const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
   return days[new Date(dateString).getDay()];
 };
 
-export const toDateTimeLocal = (isoString: string | null): string => {
-  if (!isoString) return "";
-  const date = new Date(isoString);
-  const offset = date.getTimezoneOffset() * 60000;
-  return new Date(date.getTime() - offset).toISOString().slice(0, 16);
-};
+export const toDateTimeLocal = (dateString: string | null): string => {
+  if (!dateString) return "";
+  const safeDateString = dateString.includes("T")
+    ? dateString.endsWith("Z")
+      ? dateString
+      : `${dateString}Z`
+    : `${dateString.replace(" ", "T")}Z`;
 
-export const formatDateTime = (isoString: string | null): string => {
-  return isoString ? new Date(isoString).toLocaleString("id-ID") : "-";
+  try {
+    const date = new Date(safeDateString);
+    if (isNaN(date.getTime())) return "";
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  } catch (error) {
+    return "";
+  }
 };

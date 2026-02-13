@@ -11,7 +11,7 @@ import {
 } from "@heroui/react";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import type { Pos } from "../../types/pos";
-import { formatDateIND } from "../../Utils/helpers";
+import { formatTanggal } from "../../Utils/helpers";
 
 interface PosTableProps {
   data: Pos[];
@@ -81,7 +81,7 @@ export const PosTable = ({
             <TableCell>{item.kode}</TableCell>
             <TableCell>{item.lng}</TableCell>
             <TableCell>{item.lat}</TableCell>
-            <TableCell>{formatDateIND(item.created_at)}</TableCell>
+            <TableCell>{formatTanggal(item.created_at)}</TableCell>
             <TableCell>
               <div className="flex justify-center gap-3">
                 <Button

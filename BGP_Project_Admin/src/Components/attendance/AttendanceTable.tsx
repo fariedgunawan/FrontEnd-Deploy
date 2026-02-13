@@ -10,6 +10,7 @@ import {
   Button,
 } from "@heroui/react";
 import { FaEdit } from "react-icons/fa";
+import { formatDateTimeZone } from "../../Utils/helpers";
 import type { Absensi } from "../../types/attendance";
 
 interface AttendanceTableProps {
@@ -92,8 +93,8 @@ export const AttendanceTable = ({
                 {item.kategori}
               </span>
             </TableCell>
-            <TableCell>{item.check_in}</TableCell>
-            <TableCell>{item.check_out}</TableCell>
+            <TableCell>{formatDateTimeZone(item.check_in)}</TableCell>
+            <TableCell>{formatDateTimeZone(item.check_out)}</TableCell>
             <TableCell className="text-center">
               <Button
                 size="sm"

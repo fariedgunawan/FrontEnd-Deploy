@@ -11,6 +11,7 @@ import {
   Tooltip,
 } from "@heroui/react";
 import { FaEdit, FaImage } from "react-icons/fa";
+import { formatDateTimeZone } from "../../Utils/helpers";
 import type { Patroli } from "../../types/patroli";
 
 interface PatroliTableProps {
@@ -75,7 +76,7 @@ export const PatroliTable = ({
             <TableCell>{(page - 1) * rowsPerPage + index + 1}</TableCell>
             <TableCell>{item.nama_satpam}</TableCell>
             <TableCell>{item.nip}</TableCell>
-            <TableCell>{item.created_at}</TableCell>
+            <TableCell>{formatDateTimeZone(item.created_at)}</TableCell>
             <TableCell>{item.nama_pos}</TableCell>
             <TableCell>
               <span

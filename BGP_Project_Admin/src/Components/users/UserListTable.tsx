@@ -11,7 +11,7 @@ import {
 } from "@heroui/react";
 import { FaTrash } from "react-icons/fa";
 import type { User } from "../../types/user";
-import { formatDate } from "../../Utils/helpers";
+import { formatTanggal } from "../../Utils/helpers";
 
 interface UserListTableProps {
   users: User[];
@@ -74,7 +74,7 @@ export const UserListTable = ({
             <TableCell>{(page - 1) * rowsPerPage + index + 1}</TableCell>
             <TableCell>{item.nama}</TableCell>
             <TableCell>{item.username}</TableCell>
-            <TableCell>{formatDate(item.created_at)}</TableCell>
+            <TableCell>{formatTanggal(item.created_at)}</TableCell>
             <TableCell>
               <div className="flex justify-center">
                 <Button
