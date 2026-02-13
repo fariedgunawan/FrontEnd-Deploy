@@ -38,6 +38,7 @@ export const AttendanceEditModal = ({
                 variant="underlined"
                 labelPlacement="inside"
                 value={formData.check_in}
+                errorMessage="Input harus benar atau setidaknya terisi"
                 onChange={(e) =>
                   setFormData({ ...formData, check_in: e.target.value })
                 }
@@ -50,6 +51,7 @@ export const AttendanceEditModal = ({
                 variant="underlined"
                 labelPlacement="inside"
                 value={formData.check_out}
+                errorMessage="Input harus benar atau setidaknya terisi"
                 onChange={(e) =>
                   setFormData({ ...formData, check_out: e.target.value })
                 }
