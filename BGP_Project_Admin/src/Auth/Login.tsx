@@ -154,7 +154,8 @@ const Login = () => {
         <Input
           variant="bordered"
           type="text"
-          label="Username"
+          size="lg"
+          placeholder="Masukkan Username Anda"
           className="mt-5"
           value={username}
           isInvalid={!!validationErrors.username}
@@ -172,9 +173,10 @@ const Login = () => {
           Password
         </h2>
         <Input
-          variant="bordered"
           type="password"
-          label="Password"
+          size="lg"
+          placeholder="Masukkan Password Anda"
+          variant="bordered"
           className="mt-5"
           value={password}
           isInvalid={!!validationErrors.password}
