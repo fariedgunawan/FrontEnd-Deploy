@@ -23,6 +23,7 @@ const Navbar = () => {
     hour: "2-digit",
     minute: "2-digit",
     hour12: false,
+    timeZoneName: "short",
   });
 
   const getGreeting = () => {
@@ -90,7 +91,7 @@ const Navbar = () => {
           <div className="flex items-center gap-2 px-4 py-2 bg-[#122C93] text-white rounded-2xl shadow-lg shadow-blue-900/20">
             <IoTimeOutline className="text-lg" />
             <span className="text-sm font-bold tracking-wide">
-              {formattedTime} WIB
+              {formattedTime}
             </span>
           </div>
         </div>
