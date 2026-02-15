@@ -52,7 +52,7 @@ export const PatroliEditModal = ({
               label="Keterangan"
               variant="underlined"
               labelPlacement="inside"
-              maxLength={240}
+              maxLength={501}
               placeholder="Keterangan situasi..."
               value={formData.keterangan}
               onChange={(e) =>

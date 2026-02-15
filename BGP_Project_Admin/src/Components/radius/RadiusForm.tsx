@@ -29,7 +29,8 @@ export const RadiusForm = ({ settingsHook }: RadiusFormProps) => {
           variant="bordered"
           size="lg"
           placeholder="Contoh: 100"
-          maxLength={50}
+          maxLength={1001}
+          minLength={20}
           value={radiusUtama}
           isInvalid={!!errors.radiusUtama}
           errorMessage={errors.radiusUtama}
@@ -55,7 +56,8 @@ export const RadiusForm = ({ settingsHook }: RadiusFormProps) => {
           type="number"
           variant="bordered"
           size="lg"
-          maxLength={50}
+          maxLength={1001}
+          minLength={20}
           placeholder="Contoh: 50"
           value={radiusPatroli}
           isInvalid={!!errors.radiusPatroli}

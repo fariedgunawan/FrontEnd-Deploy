@@ -68,7 +68,9 @@ export const ShiftTable = ({
         {data.map((item, index) => (
           <TableRow key={item.uuid}>
             <TableCell>{(page - 1) * rowsPerPage + index + 1}</TableCell>
-            <TableCell>{item.nama}</TableCell>
+            <TableCell>
+              <div className="w-[150px] truncate">{item.nama}</div>
+            </TableCell>
             <TableCell>{item.mulai}</TableCell>
             <TableCell>{item.selesai}</TableCell>
             <TableCell>

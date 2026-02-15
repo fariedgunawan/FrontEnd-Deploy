@@ -75,9 +75,15 @@ export const ScheduleTable = ({
             <TableCell>{getHari(item.tanggal)}</TableCell>
             <TableCell>{item.tanggal}</TableCell>
             <TableCell>{`${item.mulai.slice(0, 5)} - ${item.selesai.slice(0, 5)}`}</TableCell>
-            <TableCell>{item.satpam_name}</TableCell>
-            <TableCell>{item.shift_nama}</TableCell>
-            <TableCell>{item.nama_pos}</TableCell>
+            <TableCell>
+              <div className="w-[150px] truncate">{item.satpam_name}</div>
+            </TableCell>
+            <TableCell>
+              <div className="w-[150px] truncate">{item.shift_nama}</div>
+            </TableCell>
+            <TableCell>
+              <div className="w-[150px] truncate">{item.nama_pos}</div>
+            </TableCell>
             <TableCell>
               <div className="flex justify-center gap-3">
                 <Button

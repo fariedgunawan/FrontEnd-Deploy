@@ -103,6 +103,31 @@ export const SatpamTable = ({
                       {(page - 1) * rowsPerPage + data.indexOf(item) + 1}
                     </TableCell>
                   );
+                case "nama":
+                  return (
+                    <TableCell>
+                      <div className="w-[150px] truncate" title={String(val)}>
+                        {val}
+                      </div>
+                    </TableCell>
+                  );
+
+                case "asal_daerah":
+                  return (
+                    <TableCell>
+                      <div className="w-[150px] truncate" title={String(val)}>
+                        {val}
+                      </div>
+                    </TableCell>
+                  );
+                case "nip":
+                  return (
+                    <TableCell>
+                      <div className="w-[150px] truncate" title={String(val)}>
+                        {val}
+                      </div>
+                    </TableCell>
+                  );
                 case "created_at":
                   return (
                     <TableCell>{formatTanggal(item.created_at)}</TableCell>
@@ -110,7 +135,9 @@ export const SatpamTable = ({
                 case "mitra":
                   return (
                     <TableCell>
-                      {userRole === "Client" ? null : item.nama_client || "-"}
+                      <div className="w-[150px] truncate">
+                        {userRole === "Client" ? null : item.nama_client || "-"}
+                      </div>
                     </TableCell>
                   );
                 case "aksi":

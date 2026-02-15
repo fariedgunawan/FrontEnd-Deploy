@@ -157,6 +157,8 @@ const Login = () => {
           size="lg"
           placeholder="Masukkan Username Anda"
           className="mt-5"
+          minLength={5}
+          maxLength={101}
           value={username}
           isInvalid={!!validationErrors.username}
           errorMessage={validationErrors.username}
@@ -177,6 +179,8 @@ const Login = () => {
           size="lg"
           placeholder="Masukkan Password Anda"
           variant="bordered"
+          maxLength={17}
+          minLength={8}
           className="mt-5"
           value={password}
           isInvalid={!!validationErrors.password}

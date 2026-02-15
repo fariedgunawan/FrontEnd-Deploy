@@ -35,7 +35,8 @@ export const PosFormModal = ({
                 label="Nama Pos"
                 placeholder="Masukan nama"
                 variant="underlined"
-                maxLength={60}
+                maxLength={101}
+                min={4}
                 size="lg"
                 value={formData.nama}
                 onChange={(e) =>
@@ -46,7 +47,8 @@ export const PosFormModal = ({
                 label="Kode Pos"
                 placeholder="Masukan Kode Pos"
                 variant="underlined"
-                maxLength={60}
+                maxLength={21}
+                minLength={1}
                 size="lg"
                 value={formData.kode}
                 onChange={(e) =>

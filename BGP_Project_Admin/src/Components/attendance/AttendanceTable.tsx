@@ -84,8 +84,14 @@ export const AttendanceTable = ({
         {data.map((item, index) => (
           <TableRow key={item.uuid}>
             <TableCell>{(page - 1) * rowsPerPage + index + 1}</TableCell>
-            <TableCell>{item.nama_satpam}</TableCell>
-            <TableCell>{item.nip}</TableCell>
+
+            <TableCell>
+              <div className="w-[150px] truncate">{item.nama_satpam}</div>
+            </TableCell>
+
+            <TableCell>
+              <div className="w-[150px] truncate">{item.nip}</div>
+            </TableCell>
             <TableCell>
               <span
                 className={`px-3 py-1 rounded-full text-xs font-semibold ${getCategoryStyles(item.kategori)}`}

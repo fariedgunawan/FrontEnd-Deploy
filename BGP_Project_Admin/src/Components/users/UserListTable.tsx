@@ -72,8 +72,13 @@ export const UserListTable = ({
         {users.map((item, index) => (
           <TableRow key={item.uuid}>
             <TableCell>{(page - 1) * rowsPerPage + index + 1}</TableCell>
-            <TableCell>{item.nama}</TableCell>
-            <TableCell>{item.username}</TableCell>
+            <TableCell>
+              <div className="w-[150px] truncate">{item.nama}</div>
+            </TableCell>
+            <TableCell>
+              <div className="w-[150px] truncate"></div>
+              {item.username}
+            </TableCell>
             <TableCell>{formatTanggal(item.created_at)}</TableCell>
             <TableCell>
               <div className="flex justify-center">

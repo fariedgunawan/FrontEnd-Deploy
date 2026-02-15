@@ -74,10 +74,16 @@ export const PatroliTable = ({
         {data.map((item, index) => (
           <TableRow key={item.uuid}>
             <TableCell>{(page - 1) * rowsPerPage + index + 1}</TableCell>
-            <TableCell>{item.nama_satpam}</TableCell>
-            <TableCell>{item.nip}</TableCell>
+            <TableCell>
+              <div className="w-[150px] truncate">{item.nama_satpam}</div>
+            </TableCell>
+            <TableCell>
+              <div className="w-[150px] truncate">{item.nip}</div>
+            </TableCell>
             <TableCell>{formatDateTimeZone(item.created_at)}</TableCell>
-            <TableCell>{item.nama_pos}</TableCell>
+            <TableCell>
+              <div className="w-[150px] truncate">{item.nama_pos}</div>
+            </TableCell>
             <TableCell>
               <span
                 className={`px-3 py-1 rounded-full text-xs font-semibold ${item.status_lokasi === "Aman" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}
@@ -85,8 +91,8 @@ export const PatroliTable = ({
                 {item.status_lokasi}
               </span>
             </TableCell>
-            <TableCell className="max-w-[200px] truncate">
-              {item.keterangan}
+            <TableCell>
+              <div className="w-[150px] truncate">{item.keterangan}</div>
             </TableCell>
             <TableCell>
               <div className="flex justify-center">

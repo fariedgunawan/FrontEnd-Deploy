@@ -77,8 +77,12 @@ export const PosUtamaTable = ({
             <TableCell>
               {(page - 1) * rowsPerPage + data.indexOf(item) + 1}
             </TableCell>
-            <TableCell>{item.nama}</TableCell>
-            <TableCell>{item.kode}</TableCell>
+            <TableCell>
+              <div className="w-[150px] truncate">{item.nama}</div>
+            </TableCell>
+            <TableCell>
+              <div className="w-[150px] truncate">{item.kode}</div>
+            </TableCell>
             <TableCell>{item.lng}</TableCell>
             <TableCell>{item.lat}</TableCell>
             <TableCell>{formatTanggal(item.created_at)}</TableCell>
