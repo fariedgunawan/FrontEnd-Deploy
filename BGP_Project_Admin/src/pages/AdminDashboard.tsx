@@ -11,7 +11,7 @@ const AdminDashboard = () => {
       <div className="flex flex-col gap-8">
         {/* HEADER */}
         <div>
-          <h1 className="text-3xl font-bold text-[#122C93]">Dashboard</h1>
+          <h1 className="text-3xl font-bold text-[#122C93]">Dashboard y</h1>
           <p className="text-gray-500 mt-1">
             {greeting}, {user?.nama || "User"}. Silakan pilih menu di bawah ini.
           </p>

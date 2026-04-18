@@ -14,7 +14,7 @@ const PrivateRoute = () => {
     }
   }, [navigate, token]);
 
-  //  return <Outlet/> 
+  //  return <Outlet/>
   return token ? <Outlet /> : null;
 };
 
